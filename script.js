@@ -1,7 +1,7 @@
-const speedSlider = document.getElementById("speed");
-const [binary, octal, decimal, hexadecimal] = document.querySelectorAll(".binary, .octal, .decimal, .hexadecimal");
-const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-const systems = [];
+const speedSlider = document.getElementById("speed"),
+[binary, octal, decimal, hexadecimal] = document.querySelectorAll(".binary, .octal, .decimal, .hexadecimal"),
+digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+systems = [];
 
 [binary, octal, decimal, hexadecimal].forEach((element, index) => {
   element.innerHTML = element.classList[0].slice(0, 3) + "-";
@@ -11,7 +11,8 @@ const systems = [];
   systems.push({ base, spans });
 });
 
-let counter = 0,
+let counterBinary = 0,
+counterOther = 0,
 lastTime = performance.now(),
 accumulator = 0;
 
@@ -20,8 +21,9 @@ function getStepDelay() {
 }
 
 function renderAll() {
-  systems.forEach(sys => {
-    let str = counter.toString(sys.base);
+  systems.forEach((sys, index) => {
+    let value = (index === 0) ? counterBinary : counterOther;
+    let str = value.toString(sys.base);
     str = str.padStart(sys.spans.length, "0");
     for (let i = 0; i < sys.spans.length; i++) sys.spans[i].textContent = str[i];
   });
@@ -35,7 +37,8 @@ function animate(now) {
 
   while (accumulator >= stepDelay) {
     accumulator -= stepDelay;
-    counter = (counter + 1) % 2 ** 16;
+    counterBinary = (counterBinary + 1) % 2 ** 16;
+    counterOther += 1;
     renderAll();
   }
 
